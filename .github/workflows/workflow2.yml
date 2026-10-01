@@ -1,0 +1,12 @@
+name: Workflow 2
+on:
+  workflow_run:
+    workflows: ["main"]
+    types:
+      - completed
+jobs:
+  job1:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Show message
+        run: echo "Workflow 1 finished"
