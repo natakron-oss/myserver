@@ -1,6 +1,8 @@
 *
 !dist/
-!dist/index.js
+!dist/*.js
 !.github/
 !.github/workflows/
 !.github/workflows/*.yml
+!package.json
+!package-lock.json
