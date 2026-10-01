@@ -1,12 +1,23 @@
 name: Workflow 3
+
 on:
   workflow_run:
     workflows: ["main"]
     types:
       - completed
+
 jobs:
-  job1:
+  integration-test:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Show message
-        run: echo "Workflow 3 running after Workflow 1"
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: npm install
+
+      - name: Run Integration Test
+        run: npm test
