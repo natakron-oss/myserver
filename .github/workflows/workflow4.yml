@@ -1,12 +1,12 @@
-name: Workflow 4
-on:
-  workflow_run:
-    workflows: ["Workflow 3"]
-    types:
-      - completed
+name: main
+on: [push]
 jobs:
-  job1:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Show message
-        run: echo "Workflow 4 running after Workflow 3"
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Run Test1
+        run: node dist/Test1.js
