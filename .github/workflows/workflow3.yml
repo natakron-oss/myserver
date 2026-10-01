@@ -1,4 +1,4 @@
-name: Workflow 2
+name: Workflow 3
 on:
   workflow_run:
     workflows: ["main"]
@@ -9,4 +9,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Show message
-        run: echo "Workflow 2 running after Workflow 1"
+        run: echo "Workflow 3 running after Workflow 1"
