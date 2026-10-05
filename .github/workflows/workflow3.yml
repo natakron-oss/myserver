@@ -7,7 +7,7 @@ on:
       - completed
 
 jobs:
-  integration-test:
+  unit-test:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,5 +22,5 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Run Integration Test
-        run: npm run test:integration
+      - name: Run Unit Test
+        run: npm test

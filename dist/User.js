@@ -34,9 +34,24 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
+const Utils_1 = require("./Utils");
 const UserSchema = new mongoose_1.Schema({
     name: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        validate: { validator: Utils_1.Utils.isValidEmail, message: 'Invalid email format' },
+    },
+    age: {
+        type: Number,
+        required: true,
+        validate: { validator: Utils_1.Utils.isValidAge, message: 'Age must be an integer between 0 and 120' },
+    },
+    password: {
+        type: String,
+        required: true,
+        validate: { validator: Utils_1.Utils.isValidPassword, message: 'Password must contain digits only' },
+    },
 });
 exports.default = mongoose_1.default.model('User', UserSchema);

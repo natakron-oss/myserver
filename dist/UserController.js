@@ -12,15 +12,39 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateUser = exports.deleteUser = exports.getUserById = exports.getUsers = exports.createUser = void 0;
+exports.deleteAllUsers = exports.updateUser = exports.deleteUser = exports.getUserById = exports.getUsers = exports.createUser = void 0;
 const User_1 = __importDefault(require("./User"));
+const Utils_1 = require("./Utils");
 // create
 const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     try {
-        const { name, email, password } = req.body;
-        const newUser = new User_1.default({ name, email, password });
+        const { name, email, age, password } = (_a = req.body) !== null && _a !== void 0 ? _a : {};
+        if (!Utils_1.Utils.isValidName(name)) {
+            res.status(400).json({ message: 'Name is required' });
+            return;
+        }
+        if (!Utils_1.Utils.isValidEmail(email)) {
+            res.status(400).json({ message: 'Invalid email format' });
+            return;
+        }
+        if (!Utils_1.Utils.isValidAge(age)) {
+            res.status(400).json({ message: 'Age must be an integer between 0 and 120' });
+            return;
+        }
+        if (!Utils_1.Utils.isValidPassword(password)) {
+            res.status(400).json({ message: 'Password must contain digits only' });
+            return;
+        }
+        const newUser = new User_1.default({ name, email, age, password });
         yield newUser.save();
-        res.status(201).json(newUser);
+        res.status(201).json({
+            id: newUser.id,
+            name: newUser.name,
+            email: newUser.email,
+            age: newUser.age,
+            password: newUser.password,
+        });
     }
     catch (error) {
         res.status(500).json({ message: 'Error creating user', error });
@@ -88,3 +112,17 @@ const updateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.updateUser = updateUser;
+// delete all
+const deleteAllUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const result = yield User_1.default.deleteMany({});
+        res.status(200).json({
+            message: 'All users deleted',
+            deletedCount: result.deletedCount,
+        });
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Error deleting users', error });
+    }
+});
+exports.deleteAllUsers = deleteAllUsers;
