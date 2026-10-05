@@ -1,7 +1,15 @@
 *
+!.gitignore
+!README.md
+!package.json
+!package-lock.json
+!tsconfig.json
+!nodemon.json
+!config.example.json
 !dist/
 !dist/*.js
+!src/
+!src/**
 !.github/
 !.github/workflows/
 !.github/workflows/*.yml
-!config.example.json

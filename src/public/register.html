@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>สมัครสมาชิก</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#e9eeec; --card:#fbfcfb; --ink:#17302b; --muted:#5d716c; --line:#c5d0cc; --accent:#0f766e; --bad:#b42318; --good:#1a7f4b; }
+  * { box-sizing: border-box; }
+  body { margin:0; min-height:100vh; display:grid; place-items:center; padding:24px; background:var(--bg); color:var(--ink);
+         font-family:"IBM Plex Sans Thai", system-ui, sans-serif; line-height:1.5; }
+  main { width:100%; max-width:420px; }
+  h1 { font-size:1.75rem; font-weight:600; margin:0 0 4px; letter-spacing:-0.01em; }
+  .lead { margin:0 0 24px; color:var(--muted); }
+  form { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:24px; }
+  .field { margin-bottom:18px; }
+  label { display:block; font-weight:500; margin-bottom:6px; }
+  input { width:100%; padding:10px 12px; font:inherit; color:inherit; background:#fff; border:1.5px solid var(--line); border-radius:6px; }
+  input:focus-visible { outline:3px solid rgba(15,118,110,.3); border-color:var(--accent); }
+  button { width:100%; padding:12px; font:inherit; font-weight:600; color:#fff; background:var(--accent); border:0; border-radius:6px; cursor:pointer; }
+  button:hover:enabled { background:#0b5f58; }
+  button:focus-visible { outline:3px solid rgba(15,118,110,.4); outline-offset:2px; }
+  button:disabled { background:#9db5b1; cursor:wait; }
+  #result { margin-top:18px; display:none; }
+  #result.show { display:block; }
+  .msg { font-weight:600; margin:0 0 8px; }
+  .msg.ok { color:var(--good); }
+  .msg.err { color:var(--bad); }
+  pre { margin:0; padding:12px; background:#17302b; color:#dff3ee; border-radius:6px; overflow-x:auto; font-size:.875rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>สมัครสมาชิก</h1>
+  <p class="lead">ข้อมูลทั้งหมดจะถูกตรวจสอบที่เซิร์ฟเวอร์</p>
+
+  <form id="form" novalidate>
+    <div class="field">
+      <label for="name">ชื่อ</label>
+      <input id="name" autocomplete="name">
+    </div>
+    <div class="field">
+      <label for="email">อีเมล</label>
+      <input id="email" autocomplete="email" placeholder="name@example.com">
+    </div>
+    <div class="field">
+      <label for="age">อายุ</label>
+      <input id="age" inputmode="numeric">
+    </div>
+    <div class="field">
+      <label for="password">รหัสผ่าน</label>
+      <input id="password" type="password" autocomplete="new-password">
+    </div>
+    <button type="submit" id="submit">สมัครสมาชิก</button>
+    <div id="result" role="status" aria-live="polite"></div>
+  </form>
+</main>
+
+<script>
+  // หน้านี้ไม่ตรวจข้อมูลเอง ส่งค่าตามที่กรอกไปให้เซิร์ฟเวอร์ตรวจ (Utils.ts) แล้วแสดงผลที่ได้กลับมา
+  const form = document.getElementById('form');
+  const submitBtn = document.getElementById('submit');
+  const result = document.getElementById('result');
+  const val = id => document.getElementById(id).value;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    submitBtn.disabled = true;
+    result.className = 'show';
+    result.innerHTML = '<p class="msg">กำลังส่งข้อมูล...</p>';
+    try {
+      const ageText = val('age').trim();
+      const response = await fetch('/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: val('name'),
+          email: val('email'),
+          // ส่งเป็นตัวเลขถ้าเป็นตัวเลข ไม่งั้นส่งข้อความเดิมให้เซิร์ฟเวอร์ปฏิเสธ
+          age: ageText !== '' && !isNaN(Number(ageText)) ? Number(ageText) : ageText,
+          password: val('password'),
+        }),
+      });
+      const data = await response.json();
+      const msg = document.createElement('p');
+      const pre = document.createElement('pre');
+      if (response.ok) {
+        msg.className = 'msg ok';
+        msg.textContent = 'สมัครสมาชิกสำเร็จ id: ' + data.id;
+        form.reset();
+      } else {
+        msg.className = 'msg err';
+        msg.textContent = 'เซิร์ฟเวอร์ปฏิเสธ: ' + (data.message || response.status);
+      }
+      pre.textContent = JSON.stringify(data, null, 2);
+      result.replaceChildren(msg, pre);
+    } catch (err) {
+      result.innerHTML = '<p class="msg err">เชื่อมต่อเซิร์ฟเวอร์ไม่ได้ ตรวจสอบว่าเปิด npm start อยู่</p>';
+    }
+    submitBtn.disabled = false;
+  });
+</script>
+</body>
+</html>

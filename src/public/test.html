@@ -1,0 +1,26 @@
+<html>
+<head></head>
+<body>
+    <h1>Add New User</h1>
+    <pre id="output"></pre>
+    <script>
+        const init = async () => {
+            const response = await fetch('/api/users', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name: "A", password: "A", email: "A@hotamil.com", age: 20 })
+            });
+            const result = await response.json();
+            document.getElementById('output').textContent = JSON.stringify(result, null, 2);
+            if (response.ok) {
+                alert('User added successfully! id: ' + result.id);
+            } else {
+                alert('Failed to add user: ' + result.message);
+            }
+        }
+        init()
+    </script>
+</body>
+</html>
