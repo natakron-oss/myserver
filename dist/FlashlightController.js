@@ -8,7 +8,6 @@ class FlashlightController {
     }
     pressOn(user) {
         this.flashlight.turnOn();
-        this.logger.add(user, "ON");
     }
     pressOff(user) {
         this.flashlight.turnOff();
