@@ -1,0 +1,40 @@
+services:
+  web1:
+    build: .
+    ports: ["3001:3000"]
+    environment:
+      MONGODB_URI: mongodb://mongo:27017/web1
+    depends_on:
+      mongo: { condition: service_healthy }
+    restart: on-failure
+
+  web2:
+    build: .
+    ports: ["3002:3000"]
+    environment:
+      MONGODB_URI: mongodb://mongo:27017/web2
+    depends_on:
+      mongo: { condition: service_healthy }
+    restart: on-failure
+
+  web3:
+    build: .
+    ports: ["3003:3000"]
+    environment:
+      MONGODB_URI: mongodb://mongo:27017/web3
+    depends_on:
+      mongo: { condition: service_healthy }
+    restart: on-failure
+
+  mongo:
+    image: mongo:7
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  mongo_data:

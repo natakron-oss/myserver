@@ -1,0 +1,17 @@
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+Dockerfile*
+docker-compose*
+.dockerignore
+.git
+.gitignore
+.github
+.vscode
+.env
+.env.*
+# มี username/password ของ MongoDB ห้ามเข้า image
+config.json
+# dist จะถูก build ใหม่ใน image
+dist

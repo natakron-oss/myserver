@@ -13,3 +13,6 @@
 !.github/
 !.github/workflows/
 !.github/workflows/*.yml
+!Dockerfile
+!docker-compose.yml
+!.dockerignore
