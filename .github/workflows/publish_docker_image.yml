@@ -9,6 +9,11 @@ on:
       - completed
     branches: [main]
   workflow_dispatch:   # กดรันเองได้จากหน้า Actions
+    inputs:
+      version:
+        description: 'Image version tag (เช่น v1.0.0, v1.0.1) เว้นว่างได้'
+        required: false
+        default: 'v1.0.0'
 
 jobs:
   push_to_registry:
@@ -37,6 +42,7 @@ jobs:
           tags: |
             type=raw,value=latest
             type=sha
+            type=raw,value=${{ github.event.inputs.version }},enable=${{ github.event.inputs.version != '' }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
